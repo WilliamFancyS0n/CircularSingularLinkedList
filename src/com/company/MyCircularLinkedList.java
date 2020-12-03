@@ -1,5 +1,7 @@
+/*
+Name: William Alger
+ */
 package com.company;
-
 import java.util.Iterator;
 
 public class MyCircularLinkedList<E> implements MyList<E>

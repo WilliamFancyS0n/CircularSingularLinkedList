@@ -1,37 +1,18 @@
 /*
 Name: William Alger
-Date: Saturday, December 5th, completed at 1:54 AM :)
+Date: Saturday, December 5th, 2020
 Purpose of program:
-    This is an implementation of a circular singularly linked list with tail pointer.
-
-
-
-
+    This is an implementation of a circular singularly linked list with tail pointer that inherits from the generic MyList class
  */
 package com.company;
-
 import java.util.*;
 import java.lang.StringBuilder;
-
 public class MyCircularLinkedList<E> implements MyList<E> {
     private static int size = 0;
     Node<E> tail = null;
 
+    public MyCircularLinkedList() { }
 
-//    public static void main(String[] args) // main to test methods individually
-//    {
-//
-//    }
-
-    public MyCircularLinkedList()
-    {
-
-    }
-    public MyCircularLinkedList(E[] objects)
-    {
-        for (int i = 0; i < objects.length; i++)
-            add(objects[i]);
-    }
     @Override
     public int size()
     {
@@ -50,9 +31,6 @@ public class MyCircularLinkedList<E> implements MyList<E> {
             return false;
         }
     }
-
-
-
     @Override
     public void clear()
     {
@@ -62,11 +40,9 @@ public class MyCircularLinkedList<E> implements MyList<E> {
     private static class Node<E> {
         E element;
         Node<E> next;
-
         public Node(E element) {
             this.element = element;
         }
-
         @Override
         public boolean equals(Object o){
             return element.equals(o);
@@ -268,7 +244,7 @@ public class MyCircularLinkedList<E> implements MyList<E> {
         {
             E e = current.element;
             current = current.next;
-            isCalled = true;
+            isCalled = true; // allows you to now call the remove method;
             lastReturned = e;
             return e;
         }
@@ -279,7 +255,7 @@ public class MyCircularLinkedList<E> implements MyList<E> {
            else {
                MyCircularLinkedList.this.remove(lastReturned);
            }
-           isCalled = false;
+           isCalled = false; // makes sure that you have to call the next() method again before calling remove() in order to not get an IllegalStateException
         }
     }
 }

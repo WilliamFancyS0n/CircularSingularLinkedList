@@ -9,34 +9,15 @@ import java.util.*;
 import java.lang.StringBuilder;
 public class MyCircularLinkedList<E> implements MyList<E> {
     private static int size = 0;
-    Node<E> tail = null;
+    Node<E> tail = null; //Tail pointer
+
+//    public static void main(String[] args) {
+//
+//    } //test things here individually
 
     public MyCircularLinkedList() { }
 
-    @Override
-    public int size()
-    {
-        return size;
-    }
-    @Override
-    public boolean contains(Object o)
-    {
-        if (size == 0) return false;
-        else {
-            Node<E> current = tail.next;
-            for (int i = 0; i < size; i++) {
-                if (current.equals(o)) return true;
-                current = current.next;
-            }
-            return false;
-        }
-    }
-    @Override
-    public void clear()
-    {
-        size = 0;
-        tail = null;
-    }
+    //our node class
     private static class Node<E> {
         E element;
         Node<E> next;
@@ -44,10 +25,34 @@ public class MyCircularLinkedList<E> implements MyList<E> {
             this.element = element;
         }
         @Override
-        public boolean equals(Object o){
+        public boolean equals(Object o){ //Override our equals method so that we can use .equals() between nodes comparing their elements
             return element.equals(o);
         }
     }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean contains(Object o)
+    {
+        if (size ==0) return false;
+        Node<E> current = tail.next;
+        for (int i = 0; i < size; i++) {
+            if (current.equals(o)) return true;
+            current = current.next;
+        }
+        return false;
+    }
+
+    @Override
+    public void clear() {
+        size = 0;
+        tail = null;
+    }
+
     @Override
     public void add(int index, E e) {
         if (index == 0)
@@ -66,6 +71,7 @@ public class MyCircularLinkedList<E> implements MyList<E> {
             size++;
         }
     }
+
     public void addFirst(E e) {
         Node<E> node = new Node<>(e);
         if (tail == null) {
@@ -79,14 +85,13 @@ public class MyCircularLinkedList<E> implements MyList<E> {
         }
         size++;
     }
+
     public void addLast(E e) {
         Node<E> node = new Node<>(e);
-
         if (tail == null) {
             tail = node;
             node.next = tail;
         }
-
         else {
             Node<E> tmp = tail.next; //store link to first node as temp;
             tail.next = node; //link old tail to new ode
@@ -95,14 +100,13 @@ public class MyCircularLinkedList<E> implements MyList<E> {
         }
         size++;
     }
+
     @Override
-    public E remove(int index)
-    {
+    public E remove(int index) {
         if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
         else if (index == 0) return removeFirst();
         else if (index == size-1) return removeLast();
-        else
-        {
+        else {
             Node<E> current = tail.next;
             for (int i=1; i < index; i++) current = current.next;
             Node<E> tmp = current.next;
@@ -122,7 +126,7 @@ public class MyCircularLinkedList<E> implements MyList<E> {
     }
     public E removeLast() {
         if (size == 0) throw new NoSuchElementException();
-        else if (size == 1) { //if there is only one node in our linked list
+        else if (size == 1) { //if there is only one node in our linked list, its going to be the tail;
             Node<E> tmp = tail;
             tail = null;
             size--;
@@ -138,33 +142,47 @@ public class MyCircularLinkedList<E> implements MyList<E> {
             return tmp.element; //return removed element
         }
     }
+
     @Override
     public E get(int index) {
-        if (size == 0 || index < 0  || index > size-1)
+        if (index < 0  || index > size-1)
             throw new IndexOutOfBoundsException();
         else if (index == size-1)
-            return tail.element;
-        else{
+            return getLast();
+        else if (index == 0)
+            return getFirst();
+        else {
             Node<E> current = tail.next;
             for (int i=0; i<index; i++) current = current.next;
             return current.element;
         }
     }
+
+    public E getFirst() {
+        if (size == 0) throw new NoSuchElementException();
+        else return tail.next.element; // Since it is a circular list, the first element is always tail.next
+    }
+
+    public E getLast() {
+        if (size == 0) throw new NoSuchElementException();
+        else return tail.element;
+    }
+
     @Override
-    public int indexOf(Object e)
-    {
+    public int indexOf(Object e) {
         if (size > 0) {
             int index = 0;
             Node<E> current = tail.next;
             while (index < size) {
                 if (current.equals(e))
-                    return index;
+                    return index; //this will always return the first found index of our match starting from the beginning of our linked list
                 index++;
                 current = current.next;
             }
         }
         return -1;
     }
+
     @Override
     public int lastIndexOf(E e) {
         PriorityQueue<Integer> list = new PriorityQueue<>(Collections.reverseOrder());
@@ -173,29 +191,31 @@ public class MyCircularLinkedList<E> implements MyList<E> {
             Node<E> current = tail.next;
             while (index < size) {
                 if (current.equals(e))
-                    list.add(index);
+                    list.add(index); //if we find a match, we're going to add the index to a priority queue
                 index++;
                 current = current.next;
             }
             if (!list.isEmpty())
-                return list.poll();
+                return list.poll(); //list.poll() is always going to return the highest index if there was a match
         }
-       return -1;
+       return -1; //if no matches
     }
+
     @Override
     public E set(int index, E e)
     {
         if (index < 0 || index > size-1) throw new IndexOutOfBoundsException();
         else {
-            Node<E> current = tail.next;
-            Node<E> node = new Node<>(e);
-            for (int i = 1; i < index; i++) current = current.next;
+            Node<E> current = tail.next; //start at the first node
+            Node<E> node = new Node<>(e); //create a new node with inserted parameter
+            for (int i = 1; i < index; i++) current = current.next; //traverse to the node before the one we're changing
             Node<E> tmp = current.next; //copy the node we're replacing
-            current.next = node;
-            node.next = tmp.next;
-            return tmp.element;
+            current.next = node; //link the node we're on to our new node.
+            node.next = tmp.next; //link our new node back to the other end of the chain
+            return tmp.element; //return the node that is no longer linked to anything
         }
     }
+
     public String toString()
     {
         StringBuilder result = new StringBuilder("[");
@@ -213,14 +233,6 @@ public class MyCircularLinkedList<E> implements MyList<E> {
         }
         result.append("]");
         return result.toString();
-    }
-    public E getFirst() {
-        if (size == 0) throw new NoSuchElementException();
-        else return tail.next.element;
-    }
-    public E getLast() {
-        if (size == 0) throw new NoSuchElementException();
-        else return tail.element;
     }
 
     @Override
@@ -251,7 +263,7 @@ public class MyCircularLinkedList<E> implements MyList<E> {
         @Override
         public void remove()
         {
-           if (isCalled == false) throw new IllegalStateException();
+           if (!isCalled) throw new IllegalStateException();
            else {
                MyCircularLinkedList.this.remove(lastReturned);
            }
